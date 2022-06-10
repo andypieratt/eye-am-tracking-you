@@ -1,0 +1,24 @@
+{
+  "name": "eye-am-tracking-you",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andypieratt/eye-am-tracking-you.git"
+  },
+  "author": "Andrew Pieratt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andypieratt/eye-am-tracking-you/issues"
+  },
+  "homepage": "https://github.com/andypieratt/eye-am-tracking-you#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.3.3"
+  }
+}
