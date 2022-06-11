@@ -168,7 +168,7 @@ const updateEmpRole = async () => {
   const newEmpRole = await db
     .promise()
     .query(
-      `UPDATE employees SET role_id = "${newRole}" WHERE employees.id = ${empId} `
+      `UPDATE employees SET role_id = "${newRole}" WHERE employees.id = ${empId}`
     );
   const empTable = await db.promise().query("SELECT * FROM employees");
   console.table(empTable[0]);
