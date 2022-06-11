@@ -14,6 +14,7 @@ const db = mysql.createConnection(
   console.log("You are now connected to the workplace database")
 );
 
+//MAIN PROMPT
 const viewWorkplace = async () => {
   const { choice } = await inquirer.prompt([
     {
@@ -27,6 +28,7 @@ const viewWorkplace = async () => {
         "add a role",
         "add an employee",
         "update an employee role",
+        "I'm done viewing the workplace",
       ],
       name: "choice",
     },
@@ -43,6 +45,10 @@ const viewWorkplace = async () => {
     addRole();
   } else if (choice === "add an employee") {
     addEmployee();
+  } else if (choice === "update an employee role") {
+    updateEmpRole();
+  } else if (choice === "I'm done viewing the workplace") {
+    process.exit(0);
   }
 };
 
@@ -64,6 +70,7 @@ const viewAllRoles = async () => {
 const viewAllEmployees = async () => {
   const empTable = await db.promise().query("SELECT * FROM employees");
   console.table(empTable[0]);
+  viewWorkplace();
 };
 
 //ADD FUNCTIONS
@@ -84,11 +91,11 @@ const addDepartment = async () => {
 };
 
 const addRole = async () => {
-  const { response } = await inquirer.prompt([
+  const { roleName, salary, deptId } = await inquirer.prompt([
     {
       type: "input",
       message: "What is the name of the role you would like to add?",
-      name: "name",
+      name: "roleName",
     },
     {
       type: "input",
@@ -101,13 +108,70 @@ const addRole = async () => {
       name: "deptId",
     },
   ]);
-  const newRole = db
+  const newRole = await db
     .promise()
     .query(
-      `INSERT INTO roles (title, salary, department_id) VALUES ("${response.name}"), ("${response.salary}"), (${response.deptId});`
+      `INSERT INTO roles (title, salary, department_id) VALUES ("${roleName}", "${salary}", ${deptId});`
     );
-  const roleTable = await db.promise().query("SELECT * FROM employees");
+  const roleTable = await db.promise().query("SELECT * FROM roles");
   console.table(roleTable[0]);
+  viewWorkplace();
+};
+
+const addEmployee = async () => {
+  const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
+    {
+      type: "input",
+      message: "What is this employee's first name?",
+      name: "firstName",
+    },
+    {
+      type: "input",
+      message: "What is this employee's last name?",
+      name: "lastName",
+    },
+    {
+      type: "input",
+      message: "What is this employee's role ID?",
+      name: "roleId",
+    },
+    {
+      type: "input",
+      message: "Who is this employees manager if they have one?",
+      name: "managerId",
+    },
+  ]);
+  const newEmployee = await db
+    .promise()
+    .query(
+      `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${firstName}", "${lastName}", ${roleId}, ${managerId});`
+    );
+  const empTable = await db.promise().query("SELECT * FROM employees");
+  console.table(empTable[0]);
+  viewWorkplace();
+};
+
+//UPDATE FUNCTIONS
+const updateEmpRole = async () => {
+  const { empId, newRole } = await inquirer.prompt([
+    {
+      type: "input",
+      message: "What is the employee's ID?",
+      name: "empId",
+    },
+    {
+      type: "input",
+      message: "What is the new role ID for this employee?",
+      name: "newRole",
+    },
+  ]);
+  const newEmpRole = await db
+    .promise()
+    .query(
+      `UPDATE employees SET role_id = "${newRole}" WHERE employees.id = ${empId} `
+    );
+  const empTable = await db.promise().query("SELECT * FROM employees");
+  console.table(empTable[0]);
   viewWorkplace();
 };
 
